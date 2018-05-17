@@ -13,8 +13,8 @@ variables:
 container:
   javaOpts: -Xmx512m -Xms512m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5 -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90
 image:
-  repository: draft
-  tag: dev
+  repository: 100.64.99.139:5000/jenkinsx/ttc-connectors-ranking
+  tag: 1.0.2
   pullPolicy: IfNotPresent
 service:
   name: ttc-connectors-ranking
