@@ -65,7 +65,8 @@ public class RankingService {
         return Collections.unmodifiableMap(ranking);
     }
 
-    public List<RankedAuthor> getTop(String topic, int topSize) {
+    public List<RankedAuthor> getTop(String topic,
+                                     int topSize) {
         List<RankedAuthor> top = getCurrentRankedUsers(topic)
                 .stream()
                 .limit(topSize)

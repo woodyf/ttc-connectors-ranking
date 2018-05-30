@@ -47,9 +47,18 @@ public class UpdateAuthorRankConnector {
                            appName),
                     "rank author >>> Received a Tweet from: " + author + " related to the campaign: " + campaign + " with attitude/sentiment score: " + attitude + " - > " + processedMessage);
 
-        rankingService.rank(campaign,
-                            author);
+        int attitudeValue = Integer.valueOf(attitude);
+        if(attitudeValue > 3) {
+            rankingService.rank(campaign+"-possitive",
+                                         author);
+        }else if(attitudeValue < 2){
+            rankingService.rank(campaign+"-negative",
+                                         author);
 
+        }else {
+            rankingService.rank(campaign+"-neutral",
+                                        author);
+        }
         Map<String, Object> results = new HashMap<>();
 
         Message<IntegrationResultEvent> message = IntegrationResultEventBuilder.resultFor(event)
