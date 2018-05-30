@@ -1,5 +1,6 @@
 package org.activiti.cloud.connectors.ranking;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -20,6 +21,16 @@ public class RankingController {
         this.rankingService = rankingService;
     }
 
+    @RequestMapping(method = RequestMethod.GET, path = "/")
+    public String welcome() {
+        return "Welcome to the Campaign Engagement Ranking Service";
+    }
+
+    @RequestMapping(method = RequestMethod.GET, path = "/rank")
+    public List<String> getTopics() {
+        return new ArrayList<>(rankingService.getRanking().keySet());
+    }
+    
     @RequestMapping(method = RequestMethod.GET, path = "/rank/{topic}/possitive")
     public List<RankedAuthor> getPossitiveRanking(@PathVariable("topic") String topic) {
         logger.info(">>> Getting Possitive Ranked Authors for Campaign: " + topic);
