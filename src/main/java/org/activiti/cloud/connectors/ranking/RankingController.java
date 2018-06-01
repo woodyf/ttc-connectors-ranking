@@ -30,11 +30,11 @@ public class RankingController {
     public List<String> getTopics() {
         return new ArrayList<>(rankingService.getRanking().keySet());
     }
-    
-    @RequestMapping(method = RequestMethod.GET, path = "/rank/{topic}/possitive")
+
+    @RequestMapping(method = RequestMethod.GET, path = "/rank/{topic}/positive")
     public List<RankedAuthor> getPossitiveRanking(@PathVariable("topic") String topic) {
         logger.info(">>> Getting Possitive Ranked Authors for Campaign: " + topic);
-        return rankingService.getRanking(topic + "-possitive");
+        return rankingService.getRanking(topic + "-positive");
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/rank/{topic}/negative")

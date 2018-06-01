@@ -48,8 +48,8 @@ public class UpdateAuthorRankConnector {
                     "rank author >>> Received a Tweet from: " + author + " related to the campaign: " + campaign + " with attitude/sentiment score: " + attitude + " - > " + processedMessage);
 
         int attitudeValue = Integer.valueOf(attitude);
-        if(attitudeValue > 3) {
-            rankingService.rank(campaign+"-possitive",
+        if(attitudeValue >= 3) {
+            rankingService.rank(campaign+"-positive",
                                          author);
         }else if(attitudeValue < 2){
             rankingService.rank(campaign+"-negative",
@@ -73,7 +73,7 @@ public class UpdateAuthorRankConnector {
         String campaign = String.valueOf(event.getVariables().get("campaign"));
         int top = Integer.valueOf(event.getVariables().get("nroTopAuthors").toString());
 
-        Map<String, Object> topAuthorsInCampaign = extractTopAuthorsFromCampaign(campaign,
+        Map<String, Object> topAuthorsInCampaign = extractTopAuthorsFromCampaign(campaign+"-positive",
                                                                                  top);
 
         Message<IntegrationResultEvent> message = IntegrationResultEventBuilder.resultFor(event)
