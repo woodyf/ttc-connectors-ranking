@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.activiti.cloud.connectors.ranking;
+package org.activiti.cloud.connectors.ranking.services;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,10 +24,22 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
+import org.activiti.cloud.connectors.ranking.model.RankedAuthor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import static net.logstash.logback.marker.Markers.append;
 
 @Service
 public class RankingService {
+
+    @Value("${spring.application.name}")
+    private String appName;
+
+    private Logger logger = LoggerFactory.getLogger(RankingService.class);
 
     private Map<String, List<RankedAuthor>> ranking = new ConcurrentHashMap<>();
 
@@ -57,6 +69,10 @@ public class RankingService {
         return ranking.get(topic);
     }
 
+    public void cleanupRankingForTopic(String topic) {
+        ranking.remove(topic);
+    }
+
     public List<RankedAuthor> getRanking(String topic) {
         return Collections.unmodifiableList(getCurrentRankedUsers(topic));
     }
@@ -72,5 +88,21 @@ public class RankingService {
                 .limit(topSize)
                 .collect(Collectors.toList());
         return Collections.unmodifiableList(top);
+    }
+
+    @Scheduled(fixedRate = 60000)
+    public void logCurrentRankingsForAllCampaigns() {
+        logger.info(append("service-name",
+                           appName),
+                    ">>> Scheduled Printing (local) Ranking: ");
+        if (getRanking().keySet().isEmpty()) {
+            logger.info("No ranking set");
+        }
+        for (String key : getRanking().keySet()) {
+            logger.info("Campaign being ranked is " + key);
+            for (RankedAuthor ru : getRanking(key)) {
+                logger.info("Ranked User: " + ru);
+            }
+        }
     }
 }

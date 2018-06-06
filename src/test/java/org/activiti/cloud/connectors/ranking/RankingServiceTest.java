@@ -16,6 +16,8 @@
 
 package org.activiti.cloud.connectors.ranking;
 
+import org.activiti.cloud.connectors.ranking.model.RankedAuthor;
+import org.activiti.cloud.connectors.ranking.services.RankingService;
 import org.junit.Test;
 
 import java.util.List;
@@ -36,7 +38,7 @@ public class RankingServiceTest {
     public void rankShouldAddUserWhenNotExist() throws Exception {
         //when
         List<RankedAuthor> rank = rankingService.rank(TOPIC,
-                                                    JOHN);
+                                                      JOHN);
 
         //then
         assertThat(rank).isNotNull();

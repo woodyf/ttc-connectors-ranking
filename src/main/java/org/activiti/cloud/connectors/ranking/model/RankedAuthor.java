@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.activiti.cloud.connectors.ranking;
+package org.activiti.cloud.connectors.ranking.model;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

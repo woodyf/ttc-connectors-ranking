@@ -1,8 +1,9 @@
-package org.activiti.cloud.connectors.ranking;
+package org.activiti.cloud.connectors.ranking.connectors;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.activiti.cloud.connectors.ranking.services.RankingService;
 import org.activiti.cloud.connectors.starter.channels.IntegrationResultSender;
 import org.activiti.cloud.connectors.starter.model.IntegrationRequestEvent;
 import org.activiti.cloud.connectors.starter.model.IntegrationResultEvent;
@@ -45,7 +46,7 @@ public class UpdateAuthorRankConnector {
 
         logger.info(append("service-name",
                            appName),
-                    "rank author >>> Received a Tweet from: " + author + " related to the campaign: " + campaign + " with attitude/sentiment score: " + attitude + " - > " + processedMessage);
+                    ">>> Rank author: " + author + " related to the campaign: " + campaign + " with attitude/sentiment score: " + attitude + " - > " + processedMessage);
 
         rankingService.rank(campaign + "-" + attitude,
                             author);
