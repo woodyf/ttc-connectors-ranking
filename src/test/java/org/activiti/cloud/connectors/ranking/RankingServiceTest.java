@@ -81,7 +81,7 @@ public class RankingServiceTest {
              2);
 
         //when
-        List<RankedAuthor> rank = rankingService.getRanking(TOPIC);
+        List<RankedAuthor> rank = rankingService.getRanking(TOPIC, 3);
 
         //then
         assertThat(rank).isNotNull();
