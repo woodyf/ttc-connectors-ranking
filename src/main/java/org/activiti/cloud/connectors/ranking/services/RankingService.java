@@ -73,8 +73,15 @@ public class RankingService {
         ranking.remove(topic);
     }
 
-    public List<RankedAuthor> getRanking(String topic, int top) {
-        return Collections.unmodifiableList(getCurrentRankedUsers(topic).subList(0, top));
+    public List<RankedAuthor> getRanking(String topic,
+                                         int top) {
+
+        List<RankedAuthor> currentRankedUsers = getCurrentRankedUsers(topic);
+        if (currentRankedUsers != null && currentRankedUsers.size() > top) {
+            return Collections.unmodifiableList(currentRankedUsers.subList(0,
+                                                                           top));
+        }
+        return currentRankedUsers;
     }
 
     public Map<String, List<RankedAuthor>> getRanking() {
@@ -100,7 +107,8 @@ public class RankingService {
         }
         for (String key : getRanking().keySet()) {
             logger.info("Campaign being ranked is (hardcoded top 3) " + key);
-            for (RankedAuthor ru : getRanking(key, 3)) {
+            for (RankedAuthor ru : getRanking(key,
+                                              3)) {
                 logger.info("Ranked User: " + ru);
             }
         }
