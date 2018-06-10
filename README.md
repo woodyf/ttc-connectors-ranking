@@ -59,6 +59,4 @@ Example Ranked Activiti topic / positive attitude
 
 ```
 
-# Configuration
-
 

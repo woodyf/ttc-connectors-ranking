@@ -3,11 +3,14 @@ package org.activiti.cloud.connectors.ranking.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.activiti.cloud.connectors.ranking.configuration.RankConfiguration;
 import org.activiti.cloud.connectors.ranking.model.RankedAuthor;
 import org.activiti.cloud.connectors.ranking.services.RankingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static net.logstash.logback.marker.Markers.append;
 
 @RestController
+@RefreshScope
 public class RankingController {
 
     private Logger logger = LoggerFactory.getLogger(RankingController.class);
@@ -23,6 +27,9 @@ public class RankingController {
     private final RankingService rankingService;
     @Value("${spring.application.name}")
     private String appName;
+
+    @Autowired
+    private RankConfiguration rankConfiguration;
 
     public RankingController(RankingService rankingService) {
         this.rankingService = rankingService;
@@ -43,7 +50,7 @@ public class RankingController {
         logger.info(append("service-name",
                            appName),
                     ">>> Getting Possitive Ranked Authors for Campaign: " + topic);
-        return rankingService.getRanking(topic + "-positive");
+        return rankingService.getRanking(topic + "-positive", rankConfiguration.getTop());
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/rank/{topic}/negative")
@@ -51,7 +58,7 @@ public class RankingController {
         logger.info(append("service-name",
                            appName),
                     ">>> Getting Possitive Ranked Authors for Campaign: " + topic);
-        return rankingService.getRanking(topic + "-negative");
+        return rankingService.getRanking(topic + "-negative", rankConfiguration.getTop());
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/rank/{topic}/neutral")
@@ -59,7 +66,7 @@ public class RankingController {
         logger.info(append("service-name",
                            appName),
                     ">>> Getting Possitive Ranked Authors for Campaign: " + topic);
-        return rankingService.getRanking(topic + "-neutral");
+        return rankingService.getRanking(topic + "-neutral", rankConfiguration.getTop());
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/rank/{topic}/{attitude}/{author}")
