@@ -80,10 +80,11 @@ public class RankingController {
                             author);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, path = "/rank/{topic}/{attitude}")
-    public void cleanupRankingForTopic(@PathVariable("topic") String topic,
-                                       @PathVariable("attitude") String attitude) {
-        rankingService.cleanupRankingForTopic(topic + "-" + attitude);
+    @RequestMapping(method = RequestMethod.DELETE, path = "/rank/{topic}")
+    public void cleanupRankingForTopic(@PathVariable("topic") String topic) {
+        rankingService.cleanupRankingForTopic(topic + "-positive");
+        rankingService.cleanupRankingForTopic(topic + "-neutral");
+        rankingService.cleanupRankingForTopic(topic + "-negative");
     }
 }
 
