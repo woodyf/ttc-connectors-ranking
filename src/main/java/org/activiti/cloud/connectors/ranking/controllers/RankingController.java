@@ -37,7 +37,7 @@ public class RankingController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public String welcome() {
-        return "{ 'welcome': 'Welcome to the Campaign Engagement Ranking Service' }";
+        return "{ \"welcome\": \"Welcome to the Campaign Engagement Ranking Service\" }";
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/rank")
