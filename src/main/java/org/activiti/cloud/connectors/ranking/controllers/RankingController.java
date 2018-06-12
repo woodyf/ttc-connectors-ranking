@@ -37,7 +37,7 @@ public class RankingController {
 
     @RequestMapping(method = RequestMethod.GET, path = "/")
     public String welcome() {
-        return "Welcome to the Campaign Engagement Ranking Service";
+        return "{ 'welcome': 'Welcome to the Campaign Engagement Ranking Service' }";
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/rank")
@@ -50,7 +50,8 @@ public class RankingController {
         logger.info(append("service-name",
                            appName),
                     ">>> Getting Possitive Ranked Authors for Campaign: " + topic);
-        return rankingService.getRanking(topic + "-positive", rankConfiguration.getTop());
+        return rankingService.getRanking(topic + "-positive",
+                                         rankConfiguration.getTop());
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/rank/{topic}/negative")
@@ -58,7 +59,8 @@ public class RankingController {
         logger.info(append("service-name",
                            appName),
                     ">>> Getting Possitive Ranked Authors for Campaign: " + topic);
-        return rankingService.getRanking(topic + "-negative", rankConfiguration.getTop());
+        return rankingService.getRanking(topic + "-negative",
+                                         rankConfiguration.getTop());
     }
 
     @RequestMapping(method = RequestMethod.GET, path = "/rank/{topic}/neutral")
@@ -66,7 +68,8 @@ public class RankingController {
         logger.info(append("service-name",
                            appName),
                     ">>> Getting Possitive Ranked Authors for Campaign: " + topic);
-        return rankingService.getRanking(topic + "-neutral", rankConfiguration.getTop());
+        return rankingService.getRanking(topic + "-neutral",
+                                         rankConfiguration.getTop());
     }
 
     @RequestMapping(method = RequestMethod.POST, path = "/rank/{topic}/{attitude}/{author}")
