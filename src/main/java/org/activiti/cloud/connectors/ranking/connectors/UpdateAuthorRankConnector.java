@@ -1,20 +1,22 @@
 package org.activiti.cloud.connectors.ranking.connectors;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.activiti.cloud.connectors.ranking.services.RankingService;
 import org.activiti.cloud.connectors.starter.channels.IntegrationResultSender;
-import org.activiti.cloud.connectors.starter.model.IntegrationRequestEvent;
-import org.activiti.cloud.connectors.starter.model.IntegrationResultEvent;
-import org.activiti.cloud.connectors.starter.model.IntegrationResultEventBuilder;
+import org.activiti.cloud.connectors.starter.configuration.ConnectorProperties;
+import org.activiti.cloud.connectors.starter.model.IntegrationResultBuilder;
+import org.activiti.runtime.api.model.IntegrationRequest;
+import org.activiti.runtime.api.model.IntegrationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static net.logstash.logback.marker.Markers.append;
 
@@ -22,13 +24,13 @@ import static net.logstash.logback.marker.Markers.append;
 @EnableBinding(RankingConnectorChannels.class)
 public class UpdateAuthorRankConnector {
 
+    private final IntegrationResultSender integrationResultSender;
+    private final RankingService rankingService;
     private Logger logger = LoggerFactory.getLogger(UpdateAuthorRankConnector.class);
     @Value("${spring.application.name}")
     private String appName;
-
-    private final IntegrationResultSender integrationResultSender;
-
-    private final RankingService rankingService;
+    @Autowired
+    private ConnectorProperties connectorProperties;
 
     public UpdateAuthorRankConnector(IntegrationResultSender integrationResultSender,
                                      RankingService rankingService) {
@@ -37,39 +39,39 @@ public class UpdateAuthorRankConnector {
     }
 
     @StreamListener(value = RankingConnectorChannels.UPDATE_RANK_CONSUMER)
-    public void processEnglish(IntegrationRequestEvent event) throws InterruptedException {
+    public void processEnglish(IntegrationRequest event) throws InterruptedException {
 
-        String author = String.valueOf(event.getVariables().get("author"));
-        String campaign = String.valueOf(event.getVariables().get("campaign"));
-        String attitude = String.valueOf(event.getVariables().get("attitude"));
-        String processedMessage = String.valueOf(event.getVariables().get("text"));
+        String author = String.valueOf(event.getIntegrationContext().getInBoundVariables().get("author"));
+        String campaign = String.valueOf(event.getIntegrationContext().getInBoundVariables().get("campaign"));
+        String attitude = String.valueOf(event.getIntegrationContext().getInBoundVariables().get("attitude"));
+        String processedMessage = String.valueOf(event.getIntegrationContext().getInBoundVariables().get("text"));
 
         logger.info(append("service-name",
-                           appName),
-                    ">>> Rank author: " + author + " related to the campaign: " + campaign + " with attitude/sentiment score: " + attitude + " - > " + processedMessage);
+                appName),
+                ">>> Rank author: " + author + " related to the campaign: " + campaign + " with attitude/sentiment score: " + attitude + " - > " + processedMessage);
 
         rankingService.rank(campaign + "-" + attitude,
-                            author);
+                author);
 
         Map<String, Object> results = new HashMap<>();
 
-        Message<IntegrationResultEvent> message = IntegrationResultEventBuilder.resultFor(event)
-                .withVariables(results)
+        Message<IntegrationResult> message = IntegrationResultBuilder.resultFor(event, connectorProperties)
+                .withOutboundVariables(results)
                 .buildMessage();
         integrationResultSender.send(message);
     }
 
     @StreamListener(value = RankingConnectorChannels.GET_RANK_CONSUMER)
-    public void getRanks(IntegrationRequestEvent event) throws InterruptedException {
+    public void getRanks(IntegrationRequest event) throws InterruptedException {
 
-        String campaign = String.valueOf(event.getVariables().get("campaign"));
-        int top = Integer.valueOf(event.getVariables().get("nroTopAuthors").toString());
+        String campaign = String.valueOf(event.getIntegrationContext().getInBoundVariables().get("campaign"));
+        int top = Integer.valueOf(event.getIntegrationContext().getInBoundVariables().get("nroTopAuthors").toString());
 
         Map<String, Object> topAuthorsInCampaign = extractTopAuthorsFromCampaign(campaign + "-positive",
-                                                                                 top);
+                top);
 
-        Message<IntegrationResultEvent> message = IntegrationResultEventBuilder.resultFor(event)
-                .withVariables(topAuthorsInCampaign)
+        Message<IntegrationResult> message = IntegrationResultBuilder.resultFor(event, connectorProperties)
+                .withOutboundVariables(topAuthorsInCampaign)
                 .buildMessage();
         integrationResultSender.send(message);
     }
@@ -78,8 +80,8 @@ public class UpdateAuthorRankConnector {
                                                               int top) {
         Map<String, Object> results = new HashMap<>();
         results.put("top",
-                    rankingService.getTop(campaign,
-                                          top));
+                rankingService.getTop(campaign,
+                        top));
         return results;
     }
 }
