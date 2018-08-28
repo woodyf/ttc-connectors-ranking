@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static net.logstash.logback.marker.Markers.append;
 
+@RequestMapping(path = "/v1")
 @RestController
 @RefreshScope
 public class RankingController {
