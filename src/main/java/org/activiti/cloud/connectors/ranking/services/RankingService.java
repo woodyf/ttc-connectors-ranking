@@ -16,6 +16,8 @@
 
 package org.activiti.cloud.connectors.ranking.services;
 
+import static net.logstash.logback.marker.Markers.append;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -31,86 +33,70 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import static net.logstash.logback.marker.Markers.append;
-
 @Service
 public class RankingService {
 
-    @Value("${spring.application.name}")
-    private String appName;
+	@Value("${spring.application.name}")
+	private String appName;
 
-    private Logger logger = LoggerFactory.getLogger(RankingService.class);
+	private Logger logger = LoggerFactory.getLogger(RankingService.class);
 
-    private Map<String, List<RankedAuthor>> ranking = new ConcurrentHashMap<>();
+	private Map<String, List<RankedAuthor>> ranking = new ConcurrentHashMap<>();
 
-    public List<RankedAuthor> rank(String topic,
-                                   String username) {
-        List<RankedAuthor> rankedUsers = getCurrentRankedUsers(topic);
-        Optional<RankedAuthor> researchedUser = rankedUsers.stream()
-                .filter(user -> user.getUserName().equals(username))
-                .findFirst();
+	public List<RankedAuthor> rank(String topic, String username) {
+		List<RankedAuthor> rankedUsers = getCurrentRankedUsers(topic);
+		Optional<RankedAuthor> researchedUser = rankedUsers.stream().filter(user -> user.getUserName().equals(username))
+				.findFirst();
 
-        if (researchedUser.isPresent()) {
-            researchedUser.get().incrementTweets();
-            rankedUsers.sort(
-                    (o1, o2) ->
-                            o2.getNroOfTweets() - o1.getNroOfTweets());
-        } else {
-            rankedUsers.add(new RankedAuthor(username));
-        }
-        return ranking.get(topic);
-    }
+		if (researchedUser.isPresent()) {
+			researchedUser.get().incrementTweets();
+			rankedUsers.sort((o1, o2) -> o2.getNroOfTweets() - o1.getNroOfTweets());
+		} else {
+			rankedUsers.add(new RankedAuthor(username));
+		}
+		return ranking.get(topic);
+	}
 
-    private List<RankedAuthor> getCurrentRankedUsers(String topic) {
-        if (!ranking.containsKey(topic)) {
-            ranking.put(topic,
-                        new CopyOnWriteArrayList<>());
-        }
-        return ranking.get(topic);
-    }
+	private List<RankedAuthor> getCurrentRankedUsers(String topic) {
+		if (!ranking.containsKey(topic)) {
+			ranking.put(topic, new CopyOnWriteArrayList<>());
+		}
+		return ranking.get(topic);
+	}
 
-    public void cleanupRankingForTopic(String topic) {
-        ranking.remove(topic);
-    }
+	public void cleanupRankingForTopic(String topic) {
+		ranking.remove(topic);
+	}
 
-    public List<RankedAuthor> getRanking(String topic,
-                                         int top) {
+	public List<RankedAuthor> getRanking(String topic, int top) {
 
-        List<RankedAuthor> currentRankedUsers = getCurrentRankedUsers(topic);
-        if (currentRankedUsers != null && currentRankedUsers.size() > top) {
-            return Collections.unmodifiableList(currentRankedUsers.subList(0,
-                                                                           top));
-        }
-        return currentRankedUsers;
-    }
+		List<RankedAuthor> currentRankedUsers = getCurrentRankedUsers(topic);
+		if (currentRankedUsers != null && currentRankedUsers.size() > top) {
+			return Collections.unmodifiableList(currentRankedUsers.subList(0, top));
+		}
+		return currentRankedUsers;
+	}
 
-    public Map<String, List<RankedAuthor>> getRanking() {
-        return Collections.unmodifiableMap(ranking);
-    }
+	public Map<String, List<RankedAuthor>> getRanking() {
+		return Collections.unmodifiableMap(ranking);
+	}
 
-    public List<RankedAuthor> getTop(String topic,
-                                     int topSize) {
-        List<RankedAuthor> top = getCurrentRankedUsers(topic)
-                .stream()
-                .limit(topSize)
-                .collect(Collectors.toList());
-        return Collections.unmodifiableList(top);
-    }
+	public List<RankedAuthor> getTop(String topic, int topSize) {
+		List<RankedAuthor> top = getCurrentRankedUsers(topic).stream().limit(topSize).collect(Collectors.toList());
+		return Collections.unmodifiableList(top);
+	}
 
-    @Scheduled(fixedRate = 60000)
-    public void logCurrentRankingsForAllCampaigns() {
-        logger.info(append("service-name",
-                           appName),
-                    ">>> Scheduled Printing (local) Ranking: ");
-        if (getRanking().keySet().isEmpty()) {
-            logger.info("No ranking set");
-        }
-        for (String key : getRanking().keySet()) {
-            logger.info("Campaign being ranked is (hardcoded top 3) " + key);
-            for (RankedAuthor ru : getRanking(key,
-                                              3)) {
-                logger.info("Ranked User: " + ru);
-            }
-        }
-    }
+	@Scheduled(fixedRate = 60000)
+	public void logCurrentRankingsForAllCampaigns() {
+		logger.info(append("service-name", appName), ">>> Scheduled Printing (local) Ranking: ");
+		if (getRanking().keySet().isEmpty()) {
+			logger.info("No ranking set");
+		}
+		for (String key : getRanking().keySet()) {
+			logger.info("Campaign being ranked is (hardcoded top 3) " + key);
+			for (RankedAuthor ru : getRanking(key, 3)) {
+				logger.info("Ranked User: " + ru);
+			}
+		}
+	}
 }

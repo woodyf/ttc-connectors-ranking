@@ -21,13 +21,13 @@ import org.springframework.messaging.SubscribableChannel;
 
 public interface RankingConnectorChannels {
 
-    String UPDATE_RANK_CONSUMER = "updateRankConsumer";
-    String GET_RANK_CONSUMER = "getRankConsumer";
+	String UPDATE_RANK_CONSUMER = "updateRankConsumer";
+	String GET_RANK_CONSUMER = "getRankConsumer";
 
-    @Input(UPDATE_RANK_CONSUMER)
-    SubscribableChannel updateRankConsumer();
+	@Input(UPDATE_RANK_CONSUMER)
+	SubscribableChannel updateRankConsumer();
 
-    @Input(GET_RANK_CONSUMER)
-    SubscribableChannel getRankConsumer();
+	@Input(GET_RANK_CONSUMER)
+	SubscribableChannel getRankConsumer();
 
 }

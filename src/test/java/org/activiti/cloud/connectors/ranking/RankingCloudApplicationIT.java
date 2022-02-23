@@ -16,25 +16,22 @@
 
 package org.activiti.cloud.connectors.ranking;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class RankingCloudApplicationIT {
 
-    @Autowired
-    private ApplicationContext context;
+	@Autowired
+	private ApplicationContext context;
 
-    @Test
-    public void contextShouldLoad() throws Exception {
-        //then
-        assertThat(context).isNotNull();
-    }
+	@Test
+	public void contextShouldLoad() throws Exception {
+		// then
+		assertThat(context).isNotNull();
+	}
 }

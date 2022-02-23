@@ -20,34 +20,31 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class RankedAuthor {
 
-    private AtomicInteger nroOfTweets;
-    private String userName;
+	private AtomicInteger nroOfTweets;
+	private String userName;
 
-    public RankedAuthor() {
-    }
+	public RankedAuthor() {
+	}
 
-    public RankedAuthor(String userName) {
-        this.nroOfTweets = new AtomicInteger(1);
-        this.userName = userName;
-    }
+	public RankedAuthor(String userName) {
+		this.nroOfTweets = new AtomicInteger(1);
+		this.userName = userName;
+	}
 
-    public int getNroOfTweets() {
-        return nroOfTweets.intValue();
-    }
+	public int getNroOfTweets() {
+		return nroOfTweets.intValue();
+	}
 
-    public void incrementTweets() {
-        nroOfTweets.incrementAndGet();
-    }
+	public void incrementTweets() {
+		nroOfTweets.incrementAndGet();
+	}
 
-    public String getUserName() {
-        return userName;
-    }
+	public String getUserName() {
+		return userName;
+	}
 
-    @Override
-    public String toString() {
-        return "RankedAuthor{" +
-                "nroOfTweets=" + nroOfTweets +
-                ", userName='" + userName + '\'' +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "RankedAuthor{" + "nroOfTweets=" + nroOfTweets + ", userName='" + userName + '\'' + '}';
+	}
 }

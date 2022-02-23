@@ -7,16 +7,16 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "rank")
 public class RankConfiguration {
 
-    private int top = 3;
+	private int top = 3;
 
-    public RankConfiguration() {
-    }
+	public RankConfiguration() {
+	}
 
-    public int getTop() {
-        return top;
-    }
+	public int getTop() {
+		return top;
+	}
 
-    public void setTop(int top) {
-        this.top = top;
-    }
+	public void setTop(int top) {
+		this.top = top;
+	}
 }
